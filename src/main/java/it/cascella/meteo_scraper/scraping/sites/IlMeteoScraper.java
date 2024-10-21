@@ -16,30 +16,27 @@ import java.util.*;
 
 public class IlMeteoScraper extends MeteoScraper implements Scraper {
     private final String url = "https://www.ilmeteo.it/meteo/";
-    private EnumMap<Clima,String> climaToString = new EnumMap<>(Clima.class);
+    private Map<String,Clima> stringToClima = new HashMap<>();
+
     private String provincia;
 
     public IlMeteoScraper(String provincia) {
         this.provincia = provincia;
-        climaToString.put(Clima.SERENO,"sereno");
-        climaToString.put(Clima.NUVOLOSO,"nuvoloso");
-        climaToString.put(Clima.VENTO,"poco nuvoloso");
-        climaToString.put(Clima.TEMPORALE,"nubi sparse");
-        climaToString.put(Clima.PIOGGIA,"pioggia");
-        climaToString.put(Clima.PIOGGIA_DEBOLE,"pioggia debole");
-        climaToString.put(Clima.PIOGGIA_E_SCHIARITE,"pioggia e schiarite");
-        climaToString.put(Clima.NEBBIA,"nebbia");
-        climaToString.put(Clima.NEVE,"neve");
-        climaToString.put(Clima.PIOGGIA_MISTA_A_NEVE,"pioggia mista a neve");
+        stringToClima.put("sereno", Clima.SERENO);
+        stringToClima.put("nuvoloso", Clima.NUVOLOSO);
+        stringToClima.put("coperto", Clima.COPERTO);
+        stringToClima.put("poco nuvoloso", Clima.POCO_NUVOLOSO);
+        stringToClima.put("nubi sparse", Clima.NUBI_SPARSE);
+        stringToClima.put("pioggia", Clima.PIOGGIA);
+        stringToClima.put("pioggia debole", Clima.PIOGGIA_DEBOLE);
+        stringToClima.put("pioggia e schiarite", Clima.PIOGGIA_E_SCHIARITE);
+        stringToClima.put("nebbia", Clima.NEBBIA);
+        stringToClima.put("neve", Clima.NEVE);
+        stringToClima.put("pioggia mista a neve", Clima.PIOGGIA_MISTA_A_NEVE);
     }
-    private Clima findClima(String clima) {
-        for (Map.Entry<Clima, String> clima1 : climaToString.entrySet()) {
-            if (clima1.equals(clima)) {
-                return clima1.getKey();
-            }
-        }
-        return null;
-    }
+
+    //get the key from the value;
+
     @Override
     public void scrape() {
         try {
@@ -51,28 +48,33 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
             //iterate over the elements, get the weather infos and adding
             for (Element element : elements) {
 
-
+                //get the data-time attribute and split it to get the day and the hour
                 String data = element.attr("data-time");
                 String[] split = data.split("-");
                 Integer giorno = Integer.parseInt(split[0]);
                 Integer ora = Integer.parseInt(split[2]);
 
-
-                Clima clima = findClima(element.select(".previ-descri").text());
-                addGiornata(new GiornoOra(giorno,ora),clima);
-
-                System.out.println("-------------------------------------------------");
+                //get the weather infos
+                //System.out.println(element.select(".previ-descri").text());
+                /*System.out.println("sto stampando cio che mi arriva"+element.select(".previ-descri").text());
+                System.out.println("sto stampando la get della mappa "+stringToClima.get(element.select(".previ-descri").text()));
+                addGiornata(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));*/
+                addGiornata(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));
             }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
     public static void main(String[] args) {
         IlMeteoScraper ilMeteoScraper = new IlMeteoScraper("perugia");
         ilMeteoScraper.scrape();
+        System.out.println(ilMeteoScraper.toString());
     }
+
+
 
 
 }

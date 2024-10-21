@@ -22,7 +22,7 @@ public class Giornate {
     @Override
     public String toString() {
         return "Giornata{" +
-                "oraClima=" + oraClima +
+                "oraClima=" + oraClima.toString() +
                 '}';
     }
 }

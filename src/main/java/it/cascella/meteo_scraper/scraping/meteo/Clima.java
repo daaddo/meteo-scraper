@@ -20,5 +20,5 @@ public enum Clima {
     TEMPORALE_FORTE,
     GRANDINE_FORTE,
     NEVE_FORTE,
-    NEBBIA_FITTA
+    COPERTO, NEBBIA_FITTA
 }

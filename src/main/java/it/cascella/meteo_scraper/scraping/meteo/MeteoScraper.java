@@ -17,4 +17,11 @@ public abstract class MeteoScraper implements Scraper {
     public void deleteGiornata(GiornoOra ora) {
         meteoGiornate.getOraClima().remove(ora);
     }
+    @Override
+    public String toString() {
+        return "MeteoScraper{" +
+                "meteoGiornate=" + meteoGiornate.toString() +
+                '}';
+    }
+
 }
