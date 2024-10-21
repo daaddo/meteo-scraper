@@ -1,19 +1,20 @@
 package it.cascella.meteo_scraper.scraping.meteo;
 
 import it.cascella.meteo_scraper.scraping.Scraper;
-import it.cascella.meteo_scraper.scraping.meteo.Giornata;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class MeteoScraper implements Scraper {
-    private LinkedList<Giornata> meteoGiornate;
+    private Giornate meteoGiornate = new Giornate();
 
-    public List<Giornata> getMeteoGiornate() {
-        return Collections.unmodifiableList(meteoGiornate);
+    public Giornate getMeteoGiornate() {
+        return meteoGiornate;
     }
-    public void setMeteoGiornate(LinkedList<Giornata> meteoGiornate) {
+    public void setMeteoGiornate(Giornate meteoGiornate) {
         this.meteoGiornate = meteoGiornate;
+    }
+    public void addGiornata(GiornoOra ora, Clima clima) {
+        meteoGiornate.setOra(ora,clima);
+    }
+    public void deleteGiornata(GiornoOra ora) {
+        meteoGiornate.getOraClima().remove(ora);
     }
 }
