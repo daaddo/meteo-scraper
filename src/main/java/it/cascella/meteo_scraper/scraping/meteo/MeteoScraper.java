@@ -1,17 +1,15 @@
 package it.cascella.meteo_scraper.scraping.meteo;
 
 import it.cascella.meteo_scraper.scraping.Scraper;
+import lombok.Getter;
 
 import java.util.*;
-import java.util.function.Consumer;
 
+@Getter
 public abstract class MeteoScraper implements Scraper {
 
     private Map<GiornoOra,Clima> oraClima = new HashMap<>();
 
-    public Map<GiornoOra, Clima> getOraClima() {
-        return oraClima;
-    }
     public void setOraClima(Map<GiornoOra, Clima> oraClima) {
         this.oraClima = oraClima;
     }
@@ -22,8 +20,21 @@ public abstract class MeteoScraper implements Scraper {
         oraClima.put(ora, clima);
     }
 
-    public void deleteOra(GiornoOra ora) {
+    public void deleteOraClima(GiornoOra ora) {
         oraClima.remove(ora);
+    }
+    public void clearOraClima(){
+        oraClima.clear();
+    }
+    public Optional<Clima> isItGoingToRain(int hours){
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < hours; i++) {
+            GiornoOra giornoOra= new GiornoOra(calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.HOUR_OF_DAY)+i);
+            if (oraClima.containsKey(giornoOra) && Clima.isGonnaRain(oraClima.get(giornoOra))){
+                return Optional.of(oraClima.get(giornoOra));
+            }
+        }
+        return Optional.empty();
     }
     public Map<GiornoOra,Clima> checkChanges(int ore, Map<GiornoOra,Clima> toCheck){
         if (ore <0){
@@ -34,7 +45,7 @@ public abstract class MeteoScraper implements Scraper {
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
         int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        HashMap<GiornoOra, Clima> giornoOraClimaHashMap = new HashMap<GiornoOra, Clima>();
+        HashMap<GiornoOra, Clima> giornoOraClimaHashMap = new HashMap<>();
 
         int counter = 0;
         while(counter < ore){
@@ -73,7 +84,7 @@ public abstract class MeteoScraper implements Scraper {
         if (hour == 23){
             return new GiornoOra(day+1, 0);
         }
-        return new GiornoOra(day, hour+1);
+        return new GiornoOra(day, hour+hourAfter);
     }
 
     private Optional<Clima> checkSingleChanges(GiornoOra giornoOraToCheck, Clima climaToCheck){
@@ -122,4 +133,7 @@ public abstract class MeteoScraper implements Scraper {
         return oraClima.toString();
     }
 
+    public static void main(String[] args) {
+        System.out.println(Calendar.DAY_OF_MONTH);
+    }
 }

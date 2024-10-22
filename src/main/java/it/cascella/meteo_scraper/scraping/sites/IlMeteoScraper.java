@@ -10,15 +10,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
-import java.io.IOException;
 import java.util.*;
 
 
 public class IlMeteoScraper extends MeteoScraper implements Scraper {
     private final String url = "https://www.ilmeteo.it/meteo/";
-    private Map<String,Clima> stringToClima = new HashMap<>();
+    private final Map<String,Clima> stringToClima = new HashMap<>();
 
-    private String provincia;
+    private final String provincia;
 
     public IlMeteoScraper(String provincia) {
         this.provincia = provincia;
@@ -65,15 +64,4 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
             e.printStackTrace();
         }
     }
-
-
-    public static void main(String[] args) {
-        IlMeteoScraper ilMeteoScraper = new IlMeteoScraper("perugia");
-        ilMeteoScraper.scrape();
-        System.out.println(ilMeteoScraper.toString());
-    }
-
-
-
-
 }

@@ -21,5 +21,12 @@ public enum Clima {
     TEMPORALE_FORTE,
     GRANDINE_FORTE,
     NEVE_FORTE,
-    COPERTO, NEBBIA_FITTA
+    COPERTO,
+    NEBBIA_FITTA;
+
+
+    public static boolean isGonnaRain(Clima clima){
+        return clima == PIOGGIA || clima == PIOGGIA_DEBOLE || clima == PIOGGIA_E_SCHIARITE || clima == PIOGGIA_MISTA_A_NEVE || clima == TEMPORALE ||
+                clima == TEMPORALE_E_SCHIARITE || clima == GRANDINE || clima == TEMPORALE_FORTE || clima == GRANDINE_FORTE || clima == NEVE_FORTE;
+    }
 }

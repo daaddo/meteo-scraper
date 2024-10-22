@@ -7,12 +7,13 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MeteoScraperTest {
     private MeteoScraper meteoScraper = new IlMeteoScraper("Perugia");
-    private Map<GiornoOra, Clima> toCheck;
+    private Map<GiornoOra, Clima> toCheck = new HashMap<>();
     @BeforeEach
     void setUp() {
 
@@ -28,7 +29,28 @@ class MeteoScraperTest {
 
         meteoScraper.setOraClima(toCheck);
     }
+    @Test
+    void isItGoingToRain(){
+        Calendar calendar = Calendar.getInstance();
+        int currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
 
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour), Clima.COPERTO);
+        assertEquals(Optional.empty(),meteoScraper.isItGoingToRain(3));
+
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+1), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+2), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+3), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+4), Clima.PIOGGIA);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+5), Clima.COPERTO);
+        assertEquals(Optional.of(Clima.PIOGGIA),meteoScraper.isItGoingToRain(5));
+
+        meteoScraper.clearOraClima();
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+1), Clima.GRANDINE);
+        assertEquals(Optional.of(Clima.GRANDINE),meteoScraper.isItGoingToRain(5));
+
+
+    }
     @Test
     void checkChanges() {
         Calendar calendar = Calendar.getInstance();
@@ -43,8 +65,10 @@ class MeteoScraperTest {
 
         assertNotNull(giornoOraClimaMap);
         assertEquals(1, giornoOraClimaMap.size());
+
         HashMap<GiornoOra, Clima> giornoOraClimaHashMap1 = new HashMap<>();
         giornoOraClimaHashMap1.put(new GiornoOra(currentDay, currentHour+1), Clima.COPERTO);
+
         assertEquals(giornoOraClimaMap, giornoOraClimaHashMap1);
 
         meteoScraper.setOraClima(new HashMap<>());
