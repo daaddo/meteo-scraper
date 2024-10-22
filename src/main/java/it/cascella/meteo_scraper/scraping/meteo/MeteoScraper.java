@@ -52,10 +52,45 @@ public abstract class MeteoScraper implements Scraper {
         }
         return giornoOraClimaHashMap;
     }
+
+    private GiornoOra getPreviousHour(GiornoOra giornoOra){
+        int hour = giornoOra.ora();
+        int day = giornoOra.giorno();
+        if (hour == 0){
+            return new GiornoOra(day-1, 23);
+        }
+        return new GiornoOra(day, hour-1);
+    }
+
+    private GiornoOra getNextHour(GiornoOra giornoOra){
+        int hour = giornoOra.ora();
+        int day = giornoOra.giorno();
+        if (hour == 23){
+            return new GiornoOra(day+1, 0);
+        }
+        return new GiornoOra(day, hour+1);
+    }
+
     private Optional<Clima> checkSingleChanges(GiornoOra giornoOraToCheck, Clima climaToCheck){
-        Clima clima = oraClima.get(giornoOraToCheck);
-        if (clima != climaToCheck){
-            return Optional.of(climaToCheck);
+
+        if (oraClima.containsKey(giornoOraToCheck)) {
+            Clima clima = oraClima.get(giornoOraToCheck);
+            //todo mettere il equals
+            if (clima != climaToCheck) {
+                return Optional.of(climaToCheck);
+            }
+        }
+        else{
+
+            GiornoOra previusHour = getPreviousHour(giornoOraToCheck);
+            GiornoOra nextHour = getNextHour(giornoOraToCheck);
+            if (!(climaToCheck == oraClima.get(previusHour))&&!(climaToCheck == oraClima.get(nextHour))){
+                addOra(giornoOraToCheck, climaToCheck);
+            }
+            else{
+                addOra(giornoOraToCheck, climaToCheck);
+                return Optional.of(climaToCheck);
+            }
         }
         return Optional.empty();
     }
