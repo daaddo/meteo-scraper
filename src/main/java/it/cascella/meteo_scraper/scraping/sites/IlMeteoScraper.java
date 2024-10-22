@@ -54,12 +54,8 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
                 Integer giorno = Integer.parseInt(split[0]);
                 Integer ora = Integer.parseInt(split[2]);
 
-                //get the weather infos
-                //System.out.println(element.select(".previ-descri").text());
-                /*System.out.println("sto stampando cio che mi arriva"+element.select(".previ-descri").text());
-                System.out.println("sto stampando la get della mappa "+stringToClima.get(element.select(".previ-descri").text()));
-                addGiornata(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));*/
-                addGiornata(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));
+                //add the weather infos
+                addOra(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));
             }
 
         } catch (Exception e) {
