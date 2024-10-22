@@ -47,5 +47,27 @@ class MeteoScraperTest {
         giornoOraClimaHashMap1.put(new GiornoOra(currentDay, currentHour+1), Clima.COPERTO);
         assertEquals(giornoOraClimaMap, giornoOraClimaHashMap1);
 
+        meteoScraper.setOraClima(new HashMap<>());
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+1), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+2), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+4), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+5), Clima.COPERTO);
+
+        giornoOraClimaHashMap.clear();
+        giornoOraClimaHashMap.put(new GiornoOra(currentDay, currentHour+3), Clima.COPERTO);
+
+        giornoOraClimaMap.clear();
+        giornoOraClimaMap = meteoScraper.checkChanges(8, giornoOraClimaHashMap);
+        assertEquals(0, giornoOraClimaMap.size());
+
+        meteoScraper.setOraClima(new HashMap<>());
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+1), Clima.COPERTO);
+        meteoScraper.addOra(new GiornoOra(currentDay, currentHour+5), Clima.COPERTO);
+
+        giornoOraClimaHashMap.clear();
+        giornoOraClimaHashMap.put(new GiornoOra(currentDay, currentHour+3), Clima.COPERTO);
+        assertEquals(0, giornoOraClimaMap.size());
     }
 }

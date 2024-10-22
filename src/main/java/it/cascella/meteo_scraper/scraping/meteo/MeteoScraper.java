@@ -38,9 +38,10 @@ public abstract class MeteoScraper implements Scraper {
         while(counter < ore){
             if(currentHour+counter<24){
                 GiornoOra giornoOra = new GiornoOra(currentDay, currentHour+counter);
-                Optional<Clima> clima = checkSingleChanges(giornoOra, toCheck.get(giornoOra));
-                clima.ifPresent(clima1 -> giornoOraClimaHashMap.put(giornoOra, clima1));
-
+                if(toCheck.containsKey(giornoOra)) {
+                    Optional<Clima> clima = checkSingleChanges(giornoOra, toCheck.get(giornoOra));
+                    clima.ifPresent(clima1 -> giornoOraClimaHashMap.put(giornoOra, clima1));
+                }
             }else{
                 currentHour = 0;
                 currentDay++;
@@ -53,16 +54,16 @@ public abstract class MeteoScraper implements Scraper {
         return giornoOraClimaHashMap;
     }
 
-    private GiornoOra getPreviousHour(GiornoOra giornoOra){
+    private GiornoOra getPreviousHour(GiornoOra giornoOra, int hourBefore){
         int hour = giornoOra.ora();
         int day = giornoOra.giorno();
         if (hour == 0){
-            return new GiornoOra(day-1, 23);
+            return new GiornoOra(day-1, 24-hourBefore);
         }
-        return new GiornoOra(day, hour-1);
+        return new GiornoOra(day, hour-hourBefore);
     }
 
-    private GiornoOra getNextHour(GiornoOra giornoOra){
+    private GiornoOra getNextHour(GiornoOra giornoOra, int hourAfter){
         int hour = giornoOra.ora();
         int day = giornoOra.giorno();
         if (hour == 23){
@@ -75,19 +76,24 @@ public abstract class MeteoScraper implements Scraper {
 
         if (oraClima.containsKey(giornoOraToCheck)) {
             Clima clima = oraClima.get(giornoOraToCheck);
-            //todo mettere il equals
-            if (clima != climaToCheck) {
+            if (clima != climaToCheck && climaToCheck != null) {
                 return Optional.of(climaToCheck);
             }
         }
         else{
 
-            GiornoOra previusHour = getPreviousHour(giornoOraToCheck);
-            GiornoOra nextHour = getNextHour(giornoOraToCheck);
-            if (!(climaToCheck == oraClima.get(previusHour))&&!(climaToCheck == oraClima.get(nextHour))){
+            GiornoOra previusHour = getPreviousHour(giornoOraToCheck , 1);
+            GiornoOra nextHour = getNextHour(giornoOraToCheck, 1);
+            GiornoOra previusPreviousHour = getPreviousHour(giornoOraToCheck,2);
+            GiornoOra nextNextHour = getNextHour(giornoOraToCheck,2);
+            //questo if controlla se la ora successiva e l ora precedente sono presenti nella mappa, se presenti e almeno uno dei due clima è uguale a quello passato
+            //in argomento aggiunge l ora, se non sono presenti fa lo stesso controllo per le due ore successive
+            //necessita un refactor
+            if ((climaToCheck == oraClima.get(previusHour) || climaToCheck == oraClima.get(nextHour)) ||
+                    (oraClima.get(previusHour) == null && oraClima.get(nextHour) == null &&
+                            (climaToCheck == oraClima.get(previusPreviousHour) || climaToCheck == oraClima.get(nextNextHour)))) {
                 addOra(giornoOraToCheck, climaToCheck);
-            }
-            else{
+            } else{
                 addOra(giornoOraToCheck, climaToCheck);
                 return Optional.of(climaToCheck);
             }
