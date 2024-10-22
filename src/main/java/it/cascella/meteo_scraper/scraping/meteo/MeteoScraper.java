@@ -85,20 +85,14 @@ public abstract class MeteoScraper implements Scraper {
             }
         }
         else{
-
-            GiornoOra previusHour = getPreviousHour(giornoOraToCheck , 1);
-            GiornoOra nextHour = getNextHour(giornoOraToCheck, 1);
-            GiornoOra previusPreviousHour = getPreviousHour(giornoOraToCheck,2);
-            GiornoOra nextNextHour = getNextHour(giornoOraToCheck,2);
             //questo if controlla se la ora successiva e l ora precedente sono presenti nella mappa, se presenti e almeno uno dei due clima è uguale a quello passato
             //in argomento aggiunge l ora, se non sono presenti fa lo stesso controllo per le due ore successive
             //necessita un refactor
-            if ((climaToCheck == oraClima.get(previusHour) || climaToCheck == oraClima.get(nextHour)) ||
-                    (oraClima.get(previusHour) == null && oraClima.get(nextHour) == null &&
-                            (climaToCheck == oraClima.get(previusPreviousHour) || climaToCheck == oraClima.get(nextNextHour)))) {
+            if (isNextOrPreviousEquals(giornoOraToCheck,climaToCheck,1)){
                 addOra(giornoOraToCheck, climaToCheck);
-            }
-            else{
+            }else if (isNextOrPreviousNull(giornoOraToCheck,1) && isNextOrPreviousEquals(giornoOraToCheck,climaToCheck,2)) {
+                addOra(giornoOraToCheck, climaToCheck);
+            } else{
                 addOra(giornoOraToCheck, climaToCheck);
                 return Optional.of(climaToCheck);
             }
@@ -106,11 +100,19 @@ public abstract class MeteoScraper implements Scraper {
         return Optional.empty();
     }
 
-
-    private boolean isNextOrPreviousEquals(GiornoOra giornoOra, Clima clima, int hours){
+    private boolean isNextOrPreviousNull(GiornoOra giornoOra, int hours){
         GiornoOra previusHour = getPreviousHour(giornoOra , hours);
         GiornoOra nextHour = getNextHour(giornoOra, hours);
-        return oraClima.get(previusHour) == clima || clima == oraClima.get(nextHour);
+        return oraClima.get(previusHour)==null || oraClima.get(nextHour)==null;
+    }
+
+    private boolean isNextOrPreviousEquals(GiornoOra giornoOra, Clima clima, int hours){
+        if (clima == null){
+            throw new IllegalArgumentException("clima null");
+        }
+        GiornoOra previusHour = getPreviousHour(giornoOra , hours);
+        GiornoOra nextHour = getNextHour(giornoOra, hours);
+        return clima == oraClima.get(previusHour) || clima == oraClima.get(nextHour);
     }
 
 
