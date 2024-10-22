@@ -12,6 +12,7 @@ public enum Clima {
     NEVE,
     PIOGGIA_MISTA_A_NEVE,
     TEMPORALE,
+    TEMPORALE_E_SCHIARITE,
     GRANDINE,
 
 

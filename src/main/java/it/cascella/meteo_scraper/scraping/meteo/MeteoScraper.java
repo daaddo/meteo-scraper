@@ -26,7 +26,9 @@ public abstract class MeteoScraper implements Scraper {
         oraClima.remove(ora);
     }
     public Map<GiornoOra,Clima> checkChanges(int ore, Map<GiornoOra,Clima> toCheck){
-
+        if (ore <0){
+            throw new IllegalArgumentException("Trying to compute in the past");
+        }
         //inizializzazione del calendario
         Calendar calendar = Calendar.getInstance();
         int currentHour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -39,7 +41,9 @@ public abstract class MeteoScraper implements Scraper {
             if(currentHour+counter<24){
                 GiornoOra giornoOra = new GiornoOra(currentDay, currentHour+counter);
                 if(toCheck.containsKey(giornoOra)) {
+                    //check if
                     Optional<Clima> clima = checkSingleChanges(giornoOra, toCheck.get(giornoOra));
+
                     clima.ifPresent(clima1 -> giornoOraClimaHashMap.put(giornoOra, clima1));
                 }
             }else{
@@ -93,18 +97,28 @@ public abstract class MeteoScraper implements Scraper {
                     (oraClima.get(previusHour) == null && oraClima.get(nextHour) == null &&
                             (climaToCheck == oraClima.get(previusPreviousHour) || climaToCheck == oraClima.get(nextNextHour)))) {
                 addOra(giornoOraToCheck, climaToCheck);
-            } else{
+            }
+            else{
                 addOra(giornoOraToCheck, climaToCheck);
                 return Optional.of(climaToCheck);
             }
         }
         return Optional.empty();
     }
+
+
+    private boolean isNextOrPreviousEquals(GiornoOra giornoOra, Clima clima, int hours){
+        GiornoOra previusHour = getPreviousHour(giornoOra , hours);
+        GiornoOra nextHour = getNextHour(giornoOra, hours);
+        return oraClima.get(previusHour) == clima || clima == oraClima.get(nextHour);
+    }
+
+
+
+
     @Override
     public String toString() {
-        return "MeteoScraper{" +
-                "meteoGiornate=" + oraClima.toString() +
-                '}';
+        return oraClima.toString();
     }
 
 }

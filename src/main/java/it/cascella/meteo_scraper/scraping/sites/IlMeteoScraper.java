@@ -33,6 +33,7 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
         stringToClima.put("nebbia", Clima.NEBBIA);
         stringToClima.put("neve", Clima.NEVE);
         stringToClima.put("pioggia mista a neve", Clima.PIOGGIA_MISTA_A_NEVE);
+        stringToClima.put("temporale e schiarite", Clima.TEMPORALE_E_SCHIARITE);
     }
 
     //get the key from the value;
@@ -53,7 +54,7 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
                 String[] split = data.split("-");
                 Integer giorno = Integer.parseInt(split[0]);
                 Integer ora = Integer.parseInt(split[2]);
-
+                System.out.println("a "+provincia+" alle "+ora+" il tempo sarà: "+element.select(".previ-descri").text());
                 //add the weather infos
                 addOra(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));
             }
