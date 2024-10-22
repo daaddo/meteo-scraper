@@ -29,7 +29,7 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
         stringToClima.put("nubi sparse", Clima.NUBI_SPARSE);
         stringToClima.put("pioggia", Clima.PIOGGIA);
         stringToClima.put("pioggia debole", Clima.PIOGGIA_DEBOLE);
-        stringToClima.put("pioggia e schiarite", Clima.PIOGGIA_E_SCHIARITE);
+        stringToClima.put("pioggia e schiarite", Clima.PIOGGIA_E_SCHIARITE);
         stringToClima.put("nebbia", Clima.NEBBIA);
         stringToClima.put("neve", Clima.NEVE);
         stringToClima.put("pioggia mista a neve", Clima.PIOGGIA_MISTA_A_NEVE);
@@ -44,7 +44,7 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
             //get the document and select the div with the infos about the weather, hour and day
             Document document = Jsoup.connect(url+this.provincia).get();
             Elements elements = document.select("div.meteo-dialog");
-
+            Map<GiornoOra,Clima> scrapedMap = new HashMap<>();
 
             //iterate over the elements, get the weather infos and adding
             for (Element element : elements) {
@@ -54,10 +54,12 @@ public class IlMeteoScraper extends MeteoScraper implements Scraper {
                 String[] split = data.split("-");
                 Integer giorno = Integer.parseInt(split[0]);
                 Integer ora = Integer.parseInt(split[2]);
-                System.out.println("a "+provincia+" alle "+ora+" il tempo sarà: "+element.select(".previ-descri").text());
+                GiornoOra giornoOra = new GiornoOra(giorno,ora);
+                Clima clima = stringToClima.get(element.select(".previ-descri").text());
                 //add the weather infos
-                addOra(new GiornoOra(giorno,ora),stringToClima.get(element.select(".previ-descri").text()));
+                scrapedMap.put(giornoOra,clima);
             }
+            checkChanges(24,scrapedMap);
 
         } catch (Exception e) {
             e.printStackTrace();

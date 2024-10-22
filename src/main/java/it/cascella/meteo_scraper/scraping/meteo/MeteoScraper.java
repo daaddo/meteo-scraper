@@ -87,7 +87,6 @@ public abstract class MeteoScraper implements Scraper {
         else{
             //questo if controlla se la ora successiva e l ora precedente sono presenti nella mappa, se presenti e almeno uno dei due clima è uguale a quello passato
             //in argomento aggiunge l ora, se non sono presenti fa lo stesso controllo per le due ore successive
-            //necessita un refactor
             if (isNextOrPreviousEquals(giornoOraToCheck,climaToCheck,1)){
                 addOra(giornoOraToCheck, climaToCheck);
             }else if (isNextOrPreviousNull(giornoOraToCheck,1) && isNextOrPreviousEquals(giornoOraToCheck,climaToCheck,2)) {

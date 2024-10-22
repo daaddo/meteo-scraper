@@ -67,7 +67,7 @@ class MeteoScraperTest {
         meteoScraper.addOra(new GiornoOra(currentDay, currentHour+5), Clima.COPERTO);
 
         giornoOraClimaHashMap.clear();
-        giornoOraClimaHashMap.put(new GiornoOra(currentDay, currentHour+3), Clima.COPERTO);
+        giornoOraClimaHashMap.put(new GiornoOra(currentDay, currentHour+15), Clima.COPERTO);
         assertEquals(0, giornoOraClimaMap.size());
     }
 }
